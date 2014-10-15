@@ -123,6 +123,9 @@ private String makeCall(String theurl)  {
 	 String hotelAddress = (String) jsonObject.get("formatted_address");
 	 hotel.setHotelAddress(hotelAddress);
 	 hotel.setHotelName(hotelName);
+	 JSONObject jsonLocation = jsonObject.getJSONObject("geometry"). getJSONObject("location");
+	 hotel.setLattitude(jsonLocation.getString("lat"));
+	 hotel.setLongitude(jsonLocation.getString("lng"));     
 	 return hotel;
  }
 
