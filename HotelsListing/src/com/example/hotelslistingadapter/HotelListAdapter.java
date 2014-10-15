@@ -1,5 +1,9 @@
 package com.example.hotelslistingadapter;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +11,9 @@ import com.example.hotelslisting.R;
 import com.example.model.Hotel;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +31,7 @@ public class HotelListAdapter extends BaseAdapter {
 		hotelList = list;
 	}
 	private static class ViewHolder{
-		TextView tvHotelName, tvHotelAddress;
+		TextView tvHotelName, tvHotelAddress,tvHotelCheckins;
 	}
 	
 	@Override
@@ -46,6 +52,7 @@ public class HotelListAdapter extends BaseAdapter {
 	}
 	
 	
+	@SuppressLint("NewApi")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		//Log.d("navya15","navya15 inside getView item hotelList::;"+ hotelList.get(position));
@@ -58,11 +65,16 @@ public class HotelListAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			holder.tvHotelName = (TextView) rowView.findViewById(R.id.tv_hotel_name);
 			holder.tvHotelAddress = (TextView) rowView.findViewById(R.id.tv_hotel_address);
+			holder.tvHotelCheckins = (TextView) rowView.findViewById(R.id.tv_hotel_checkins);
 			rowView.setTag(holder);
 		} else {
 			holder =(ViewHolder)rowView.getTag();
 		}
-
+        
+		new FourSquareAsyncTask(hotelList.get(position).getLattitude(), 
+				                hotelList.get(position).getLongitude(), 
+				                hotelList.get(position).getHotelName(),
+				                holder.tvHotelCheckins).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, hotelList.get(position));
 		holder.tvHotelName.setText(hotelList.get(position).getHotelName());
 	    holder.tvHotelAddress.setText(hotelList.get(position).getHotelAddress());
 		return rowView;
@@ -78,6 +90,77 @@ public class HotelListAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	
+	
+	public class FourSquareAsyncTask extends AsyncTask<Hotel, Void, String> {
+       private String FOUR_SQUARE_BASE_URL = "https://api.foursquare.com/v2/venues/search?ll=";
+       private String CLIENT_ID="BEUDWXV0VQBWQBEFBJGAN53QM5C5INFMR1C5F2JWC3VJU4WX";
+       private String CLIENT_SECRET = "10VUMJAFUILBAKD3IQRTNEM1QDHJCCNYX5GSLG2H2P5OW0MS";
+       private String TARGET_COMPANY = "foursquare";
+       
+       private String lat, longitude, name;
+       private TextView tvCheckoutCount;
+       
+       public FourSquareAsyncTask(String lat, String longitude, String name, TextView tvCheckoutCount) {
+    	   this.lat = lat;
+    	   this.longitude = longitude;
+    	   this.name = name;
+    	   this.tvCheckoutCount = tvCheckoutCount;
+       }
+       @Override
+    	protected void onPreExecute() {
+    		super.onPreExecute();
+    	}
+       
+		@Override
+		protected String doInBackground(Hotel... params) {
+			StringBuilder sb = new StringBuilder();
+			try {
+			URL url = new URL(makeFourSquareUrl());
+			URLConnection urlConnection = url.openConnection();
+			BufferedReader bufferReader = new BufferedReader(
+					new InputStreamReader(urlConnection.getInputStream()));
+			String line;
+			while ((line = bufferReader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			bufferReader.close();
+			Log.e("navya51","navya51 foursquare response ::::::"+ sb.toString());
+			return sb.toString();
+		} catch (Exception e) {
+			Log.e("navya21","navya21 exceptione::::::::"+ e);
+           return null;
+		}
+		}
+
+		
+		@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				// parse the json  and set the result in a text view
+			}
+		/*https://api.foursquare.com/v2/venues/search?ll=28.4824165,77.0891655&
+	     client_id=BEUDWXV0VQBWQBEFBJGAN53QM5C5INFMR1C5F2JWC3VJU4WX
+	     &client_secret=10VUMJAFUILBAKD3IQRTNEM1QDHJCCNYX5GSLG2H2P5OW0MS&v=20140806
+	     &m=foursquare&query=The%20Leela%20Ambience%20Gurgaon%20Hotel%20&%20Residences&limit=1
+		*/
+		private String makeFourSquareUrl(){
+			StringBuilder sb = new StringBuilder();
+			sb.append(FOUR_SQUARE_BASE_URL);
+			sb.append(lat+","+ longitude);
+			sb.append("&client_id=");
+			sb.append(CLIENT_ID);
+			sb.append("&client_secret=");
+			sb.append(CLIENT_SECRET);
+			sb.append("&v=20140806");
+			sb.append("&m=foursquare&query=");
+			sb.append(name.replaceAll("\\s+","%20"));
+			sb.append("&limit=1");
+			Log.e("navya51","navya51 foursquare url ::::::"+ sb.toString());
+			return sb.toString();
+		}
 	}
 
 }
