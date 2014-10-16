@@ -44,7 +44,7 @@ public class HotelMainActivity extends Activity {
 		hotelListView = (ListView) findViewById(R.id.lv_hotel_list);
 		hotelAdapter = new HotelListAdapter(this, new ArrayList<Hotel>());
 		hotelListView.setAdapter(hotelAdapter);
-		implementPaginationCalls();
+		//implementPaginationCalls();
 	}
 	
 	// google places return data of size 20 in one call

@@ -7,6 +7,10 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.example.hotelslisting.R;
 import com.example.model.Hotel;
 
@@ -127,10 +131,10 @@ public class HotelListAdapter extends BaseAdapter {
 				sb.append(line + "\n");
 			}
 			bufferReader.close();
-			Log.e("navya51","navya51 foursquare response ::::::"+ sb.toString());
+			//Log.e("navya51","navya51 foursquare response ::::::"+ sb.toString());
 			return sb.toString();
 		} catch (Exception e) {
-			Log.e("navya21","navya21 exceptione::::::::"+ e);
+			//Log.e("navya21","navya21 exceptione::::::::"+ e);
            return null;
 		}
 		}
@@ -139,6 +143,18 @@ public class HotelListAdapter extends BaseAdapter {
 		@Override
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
+				try {
+					Log.e("navya15","navya15 inside on postexcecute result :::::::" + result);
+				JSONObject json = new JSONObject(result);
+				JSONObject reponseJson= json.getJSONObject("response");
+				Log.e("navya21","navya21 responsjson::::" + reponseJson);
+			    foursquareJsonParse(reponseJson.getJSONArray("venues"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					Log.e("navya15","navya15 exception e ::::::::" + e);
+					//tvCheckoutCount.setText("0");
+					e.printStackTrace();
+				}
 				// parse the json  and set the result in a text view
 			}
 		/*https://api.foursquare.com/v2/venues/search?ll=28.4824165,77.0891655&
@@ -159,7 +175,20 @@ public class HotelListAdapter extends BaseAdapter {
 			sb.append(name.replaceAll("\\s+","%20"));
 			sb.append("&limit=1");
 			Log.e("navya51","navya51 foursquare url ::::::"+ sb.toString());
+			//return "https://api.foursquare.com/v2/venues/search?ll=28.4824165,77.0891655&client_id=BEUDWXV0VQBWQBEFBJGAN53QM5C5INFMR1C5F2JWC3VJU4WX&client_secret=10VUMJAFUILBAKD3IQRTNEM1QDHJCCNYX5GSLG2H2P5OW0MS&v=20140806&m=foursquare&query=The%20Leela%20Ambience%20Gurgaon%20Hotel%20&%20Residences&limit=1";
 			return sb.toString();
+		}
+		
+		
+		
+		private void foursquareJsonParse(JSONArray jsonArray) throws JSONException{
+			JSONObject fjsonObject = jsonArray.getJSONObject(0);
+			//Log.e("navya151","navya151 insidepostExecute");
+			JSONObject fjosnArray = fjsonObject.getJSONObject("stats");
+			tvCheckoutCount.setText( fjosnArray.getString("checkinsCount"));
+			Log.e("navya151","navya151 checkins::::" + fjosnArray.getString("checkinsCount"));
+			Log.e("navya151","navya151 fjsonObjectname ::::" + fjsonObject.getString("name"));
+			
 		}
 	}
 
