@@ -74,12 +74,13 @@ public class HotelListAdapter extends BaseAdapter {
 		} else {
 			holder =(ViewHolder)rowView.getTag();
 		}
-        
+       /* 
 		new FourSquareAsyncTask(hotelList.get(position).getLattitude(), 
 				                hotelList.get(position).getLongitude(), 
 				                hotelList.get(position).getHotelName(),
-				                holder.tvHotelCheckins).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, hotelList.get(position));
+				                holder.tvHotelCheckins).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, hotelList.get(position));*/
 		holder.tvHotelName.setText(hotelList.get(position).getHotelName());
+		holder.tvHotelCheckins.setText(hotelList.get(position).getCheckinCounts());
 	    holder.tvHotelAddress.setText(hotelList.get(position).getHotelAddress());
 		return rowView;
 	}
@@ -157,6 +158,8 @@ public class HotelListAdapter extends BaseAdapter {
 				}
 				// parse the json  and set the result in a text view
 			}
+		
+		
 		/*https://api.foursquare.com/v2/venues/search?ll=28.4824165,77.0891655&
 	     client_id=BEUDWXV0VQBWQBEFBJGAN53QM5C5INFMR1C5F2JWC3VJU4WX
 	     &client_secret=10VUMJAFUILBAKD3IQRTNEM1QDHJCCNYX5GSLG2H2P5OW0MS&v=20140806

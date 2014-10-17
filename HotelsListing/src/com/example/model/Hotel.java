@@ -1,10 +1,19 @@
 package com.example.model;
 
-public class Hotel {
+public class Hotel  implements Comparable<Hotel>{
 	private String hotelName;
 	private String hotelAddress;
 	private String lattitude;
 	private String longitude;
+	private String checkinCounts;
+
+	public String getCheckinCounts() {
+		return checkinCounts;
+	}
+
+	public void setCheckinCounts(String checkinCounts) {
+		this.checkinCounts = checkinCounts;
+	}
 
 	public String getLattitude() {
 		return lattitude;
@@ -43,5 +52,13 @@ public class Hotel {
 		// TODO Auto-generated method stub
 		return "hotelName :::::::" + hotelName + "hotelAddress::::::::" + hotelAddress
 				+ "longitude::::::" + longitude + "lattitude:::::::" + lattitude;
+	}
+
+	@Override
+	public int compareTo(Hotel another) {
+		// TODO Auto-generated method stub
+		
+		return (Integer.parseInt(another.checkinCounts)) - 
+				(Integer.parseInt(this.checkinCounts));
 	}
 }

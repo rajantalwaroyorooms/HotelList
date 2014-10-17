@@ -14,6 +14,12 @@
         android:text="FETCH THE lIST"
         android:onClick="fetchTheList"/>
     
+    <EditText 
+        android:id="@+id/et_enter_query"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Hotels in Gurgaon"/>
+    
     <ListView
         android:id="@+id/lv_hotel_list"
         android:layout_width="match_parent"
